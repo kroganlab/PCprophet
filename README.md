@@ -2,7 +2,29 @@
 
 Software toolkit for protein complex prediction and differential analysis of cofractionation mass spectrometry datasets.
 
+## 
+
+
+## Docker Instructions
+
+
+To run from the  Docker image on Docker hub:
+
+```
+docker  run -it -v`pwd`:/wd -w /wd bpolacco/condapcprophet python main.py -sid test/test_ids.txt -is_ppi False -db coreComplexes.txt
+```
+
+If that doesn't work, you may have to build the docker image locally. After downloading the source code (see section *Command line version*), run
+
+```
+docker  build PCprophet/dockerEnv/ -t bpolacco/condapcprophet
+```
+
+You can change `bpolacco/condapcprophet` to any tag (name) you want. Then retry the docker run command above.
+
+
 ## Getting Started
+
 
 These instructions will guide you to obtain a copy of the project, to run on your local machine, and to test the compatibility with your current Python packages.
 ### Dependencies
