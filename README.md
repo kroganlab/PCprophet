@@ -11,7 +11,7 @@ Software toolkit for protein complex prediction and differential analysis of cof
 To run from the  Docker image on Docker hub:
 
 ```
-docker  run -it -v`pwd`:/wd -w /wd bpolacco/condapcprophet python main.py -sid test/test_ids.txt -is_ppi False -db coreComplexes.txt
+docker  run -it -v`pwd`:/wd -w /wd martingordon808/condapcprophet python main.py -sid test/test_ids.txt -is_ppi False -db coreComplexes.txt
 ```
 
 If that doesn't work, you may have to build the docker image locally. After downloading the source code (see section *Command line version*), run
@@ -52,6 +52,16 @@ This will get you a working copy of PCprophet into a folder called PCprophet. Pl
 ## Usage
 
 For usage of PCprophet, refer to the [PCprophet_instructions.md](https://github.com/anfoss/PCprophet/blob/master/PCprophet_instructions.md).
+
+## Running PCProphet on Wynton
+
+As Docker is not installed on Wynton, you will need to use Singualarity to build the container and run the tool.
+Singularity automically converts Docker images
+First, ensure you have cloned the `PCprophet` repo following the `Command line version` instructions. 
+Move into the `PCprophet` folder and run the following:
+```
+singularity run -B $PWD docker://martingordon808/condapcprophet python main.py -sid test/test_ids.txt -is_ppi False -db coreComplexes.txt
+```
 
 
 ## Contributing
