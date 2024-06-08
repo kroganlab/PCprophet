@@ -321,7 +321,7 @@ class MultiExperiment(object):
                 torename = nx.node_connected_component(annot_gr, test)
                 annot_gr.remove_nodes_from(torename)
                 # select only hypo in torename and rename using cmplx + count
-                tmp = allhypo[allhypo["nm"].isin(torename)]
+                tmp = allhypo[allhypo["nm"].isin(torename)].copy() # explicitly get a copy not a slice to avoid warning
                 tmp["ID"] = "cmplx__" + str(count)
                 tosub.append(tmp)
             except KeyError:
@@ -455,6 +455,7 @@ def runner(tmp_, ids, cal, mw, fdr, mode):
     strip = lambda x: os.path.splitext(os.path.basename(x))[0]
     exp_info = {strip(k): v for k, v in exp_info.items()}
     wrout = []
+
     try:
         if os.path.isfile(cal):
             cal = calc_calibration(cal)
