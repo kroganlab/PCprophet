@@ -57,7 +57,7 @@ For usage of PCprophet, refer to the [PCprophet_instructions.md](https://github.
 
 As Docker is not available on Wynton, you will need to use Singularity to build the PCprophet container. Singularity can pull Docker images from remote repositories including Dockerhub and convert to Singularity containers. First, ensure you have installed the necessary dependencies and cloned the `PCprophet` repository following the *Command line version* instructions above.  Move into the `PCprophet` folder and run the following:
 ```
-singularity run -B $PWD docker://martingordon808/condapcprophet python main.py -sid test/test_ids.txt -is_ppi False -db coreComplexes.txt
+singularity run -B $PWD docker://martingordon808/condapcprophet:latest python main.py -sid test/test_ids.txt -is_ppi False -db coreComplexes.txt
 ```
 
 ## Contributing
