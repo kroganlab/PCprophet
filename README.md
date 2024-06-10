@@ -27,7 +27,10 @@ You can change `bpolacco/condapcprophet` to any tag (name) you want. Then retry 
 
 
 These instructions will guide you to obtain a copy of the project, to run on your local machine, and to test the compatibility with your current Python packages.
+
 ### Dependencies
+
+These are be outdated and incomplete.  See `osx/` directory for an example of setting up a conda environment.
 
 * [Python >=3.4.x](https://www.python.org)
 * [Sklearn 0.23.2](https://pypi.org/project/sklearn/)
@@ -39,6 +42,10 @@ These instructions will guide you to obtain a copy of the project, to run on you
 ### Installing
 
 We recommend using [anaconda](https://www.anaconda.com) as it contains the majority of the required packages for PCprophet. If you are using Windows and having problems adding paths of anaconda and Python, please click [here](https://www.datacamp.com/community/tutorials/installing-anaconda-windows) for guidance. Please also refer to this [page](https://stackoverflow.com/questions/54063285/numpy-is-already-installed-with-anaconda-but-i-get-an-importerror-dll-load-fail) for potential errors when importing python packages in Windows.
+
+#### OSX
+
+A conda environment tested on OSX can be found in the `osx/` directory.
 
 #### Command line version
 
