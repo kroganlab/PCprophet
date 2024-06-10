@@ -16,7 +16,7 @@ conda install matplotlib=3.1.1
 ```
 
 
-Alternatively, you can create the environment using the yml file included here.
+Alternatively, you can create the environment using the yml file included here. This yml file was output after the commands above.
 
 ```
 conda env create -f pcprophet.osx.env.yaml
@@ -24,9 +24,9 @@ conda env create -f pcprophet.osx.env.yaml
 conda activate pcprophet
 ```
 
-If your environment is successfully created, you should be able to cd to the main PCprophet directory,
-(the directory where main.py is located)
-and run PCprophet test as below:
+If your environment is successfully created, you should be able to `cd` to the main `PCprophet` directory,
+(the directory where `main.py` is located)
+and run PCprophet test as below. (Replace `[githbclonelocation]` with the relevant path on your system.):
 
 
 ```
