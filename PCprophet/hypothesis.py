@@ -46,6 +46,7 @@ def split_peaks(prot_arr, pr, skp=0):
         ret[pr] = prot_arr
         return ret
     for idx, pk in enumerate(fr_peak):
+        # hard-coded fraction/peak exclusion here?
         if pk < 6 and pk > 69:
             continue
         nm = "_".join([pr, str(idx)])
@@ -84,9 +85,19 @@ def zero_sequence(arr):
 
 def decondense(df, ids):
     """
+    create hierarchical cluster and 
     decondense a linkage matrix into all flat clusters
+    "All flat clusters" equals a list of all clusters that are defined by each
+    non-leaf node on the hc tree.  Example would be two clusters: A,B  and A,B,C
+    but not B,C in a tree like:
+      /\
+     /\ \
+    A  B C
     """
     clusters = {}
+    # do hierarchical clustering
+    # this uses "single" as its default instead of "ward". Ward is mentioned in publication
+    # also euclidean distance, so magnitude of peak matters (not just shape)
     rows = cluster.hierarchy.linkage(df)
     lab = dict(zip(range(len(ids) + 1), ids))
     for row in range(rows.shape[0]):

@@ -218,6 +218,7 @@ def main():
     files = [os.path.abspath(x) for x in files.keys()]
     # skip feature generation
     if config['GLOBAL']['skip'] == 'False':
+        # map_to_database, hypothesis, merge, generate_features, predict
         [preprocessing(infile, config) for infile in files]
     collapse.runner(
         config['GLOBAL']['temp'],

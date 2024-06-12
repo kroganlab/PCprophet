@@ -27,6 +27,8 @@ def combined_hyp(base):
     #     .agg({"CMPLT": "first", "ID": "#".join, "FT": "first", "ANN": "first"})
     #     .reset_index()
     # )
+    
+    # drops duplicate clusters but doesn't check for different orders of same proteins
     combined.drop_duplicates(subset=["MB"], keep="first", inplace=True)
     combined = combined[["ID", "MB", "FT", "ANN", "CMPLT"]]
     return combined

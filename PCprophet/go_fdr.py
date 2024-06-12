@@ -51,10 +51,19 @@ def calc_fdr(combined, db, go_thresh):
     calculate confusion matrix from test and db
     db is a networkX object
     """
+    # possible issue:
+    # this conversion to a dict(zip()) collapses identical TOTS values. 
+    # in testing, only the later  MB value is stored. Not sure thats acceptable? 
+    # in test data, identical scores happen when MB are identical gene sets with different orders
+    # This is ok, and actually the correct behavior to not double-count identical complexes.
+    # Issue only exists if non-identical complexes have identical TOTS values
     test = dict(zip(list(combined["TOTS"]), list(combined["MB"])))
+    # identify complexes whose full pairwise edges are 50% in the db (corum)
+    # keyed by TOTS value. isindb is used as Gold Standard in calc below
     isindb = {k: overlap_net(db, v) for k, v in test.items()}
     est_fdr = []
     conf_m = []
+    # re-count tp,fp,tn,fn at each threshold 
     for go_score in go_thresh:
         tp, fp, tn, fn = 0, 0, 0, 0
         for cm in test:
@@ -128,6 +137,9 @@ def estimate_cutoff(fdr_arr, thresh, target_fdr=0.5):
     estimate corum cutoff for target FDR
     use the lowest percentage of corum for reaching target fdr
     """
+    # possible issue when identical fdr at different thresholds
+    # dict(zip()) collapses multiple-thresh per same fdr_arr.  Only keeps last thresh in order
+    # which is arbitrary here because unsorted, I (bp) think.
     fdr2thresh = dict(zip(fdr_arr, thresh))
     fdr_min = min([abs(x - target_fdr) for x in fdr_arr])
     idx = [abs(x - target_fdr) for x in fdr_arr].index(fdr_min)
@@ -164,20 +176,25 @@ def fdr_from_GO(cmplx_comb, target_fdr, fdrfile):
     """
     use positive predicted annotated from db to estimate hypothesis fdr
     """
+    # define the hypo and db sets
+    # result is: hypo is any hypo complex with IS_CMPLX == YES, and non-zero go score
+    #            db_use is either IS_CMPLX == YES if more than 50 yeses, else all db complexes 
     pos = cmplx_comb[cmplx_comb["IS_CMPLX"] == "Yes"]
     # remove already here the hypothesis with 0 go
     hypo = pos[(pos["ANN"] != 1) & (pos["TOTS"] > 0)]
-    db = cmplx_comb[cmplx_comb["ANN"] == 1]
+    #db = cmplx_comb[cmplx_comb["ANN"] == 1]
+    # this gets YES complx only if  > 50 complexes with YES, otherwise all db
     db_use = eval_complexes(cmplx_comb)
+    
     io.create_file(fdrfile, ["fdr", "sumGO"])
     if target_fdr > 0:
         thresh = list(pos["TOTS"])
         go_cutoff = 0
         nm = list(hypo.index)
-        # if empty then GMM
+        # if empty then GMM, gaussina mixture model
         if db_use.empty or np.all(np.array(thresh) == 0):
             # we update nm here
-            print("Not enough reported complexes for FDR estimation, using GMM model")
+            print("Not enough reported complexes for FDR estimation, using GMM (gaussian mixture model)")
             # then we need to extract the go sum only
             go_hypo = hypo["TOTS"].values
             if go_hypo.shape[0] > 0:

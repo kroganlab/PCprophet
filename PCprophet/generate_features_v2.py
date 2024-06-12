@@ -119,27 +119,45 @@ class ComplexProfile(object):
         a, b = pairs[0].get_inte(), pairs[1].get_inte()
         # a,b are input arrays; W is window length
 
+        # am and bm are sliding-window means
         am = uniform_filter(a.astype(float), W)
         bm = uniform_filter(b.astype(float), W)
 
+        # when W = 10, skip the first 5 and the last 4
+        # am[5:-4]
         amc = am[W // 2 : -W // 2 + 1]
         bmc = bm[W // 2 : -W // 2 + 1]
-
+        
+        # at this step, da and db are 72 * 63 matrices
+        # a[:, None] is a column matrix (72 *1)
+        # amc is an array(row) (1* 63)
+        # Each column then is the distance of each point (row) minus the sliding window mean(column)
         da = a[:, None] - amc
         db = b[:, None] - bmc
 
         # Get sliding mask of valid windows
         m, n = da.shape
+        # approx. lower triangle plus diagonal from upper left (non square matrix)
         mask1 = np.arange(m)[:, None] >= np.arange(n)
+        # approx lower triangle plus diagonal from lower right
         mask2 = np.arange(m)[:, None] < np.arange(n) + W
+        # result here in dam and dbm is a band of True in columns, 10 tall, for
+        # each of the 63 columns
         mask = mask1 & mask2
+        
+        # dam and dbm are the relevant x - mean(x) for each of 63 windows 
         dam = da * mask
         dbm = db * mask
 
+        # inner product of column vectors
+        # https://stackoverflow.com/questions/48066890/using-numpy-einsum-to-compute-inner-product-of-column-vectors-of-a-matrix
+        # these are the three summations in the sample Pearson's R
+        # https://wikimedia.org/api/rest_v1/media/math/render/svg/2b9c2079a3ffc1aacd36201ea0a3fb2460dc226f
         ssAs = np.einsum("ij,ij->j", dam, dam)
         ssBs = np.einsum("ij,ij->j", dbm, dbm)
         D = np.einsum("ij,ij->j", dam, dbm)
-        # add np.nan to reach 72
+        # calculate Pearson's R for each window and
+        # add np.nan at end to reach 72 (why?)
         self.cor.append(np.hstack((D / np.sqrt(ssAs * ssBs), np.zeros(9) + np.nan)))
 
     def align_peaks(self):
@@ -386,19 +404,23 @@ def mp_cmplx(filename, goobj, gaf, mult):
     things, header = [], []
     temp = {}
     df = pd.read_csv(filename, sep="\t")
-    if mult == False:
-        npartitions = 1
-    else:
-        npartitions = 8
-    sd = dd.from_pandas(df, npartitions=npartitions)
     print("calculating features for " + filename)
-    feats = pd.DataFrame(
-        sd.map_partitions(
-            lambda df: process_slice(df, goobj, gaf), meta=(None, "object")
-        )
-        .compute(scheduler="processes")
-        .values.tolist()
-    )
+    withDask = True # useful for debugging when set to False
+    if withDask:
+      if mult == False:
+          npartitions = 1
+      else:
+          npartitions = 8
+      sd = dd.from_pandas(df, npartitions=npartitions)
+      feats = pd.DataFrame(
+          sd.map_partitions(
+              lambda df: process_slice(df, goobj, gaf), meta=(None, "object")
+          )
+          .compute(scheduler="processes")
+          .values.tolist()
+      )
+    else:
+      feats = process_slice(df, goobj, gaf)
     h = ["ID", "MB", "COR", "SHFT", "DIF", "W", "SC_CC", "SC_MF", "SC_BP", "TOTS"]
     feats.columns = h
     feats = feats[feats['ID']!=-1]
