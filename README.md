@@ -52,7 +52,7 @@ A conda environment tested on OSX can be found in the `osx/` directory.
 Ensure that you have installed the GitHub tool and 'git-lfs' command specifically for large file transfer. Please see [here](https://gist.github.com/derhuerst/1b15ff4652a867391f03) for installing GitHub and [here](https://help.github.com/en/github/managing-large-files/installing-git-large-file-storage) for the installing 'git-lfs' command.
 
 ```
-git-lfs clone https://github.com/anfoss/PCprophet PCprophet
+git clone https://github.com/kroganlab/PCprophet PCprophet
 ```
 This will get you a working copy of PCprophet into a folder called PCprophet. Please go to the 'PCprophet' folder to unzip 'tmp_GO_sp_only.txt.zip'. You then should be able to see the tmp_GO_sp_only.txt file in the same folder. Note that the 'tmp_GO_sp_only.txt' file must be under the 'PCprophet' folder.
 
